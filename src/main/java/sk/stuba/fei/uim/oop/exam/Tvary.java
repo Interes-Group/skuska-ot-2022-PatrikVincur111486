@@ -8,6 +8,4 @@ import lombok.Getter;
 public class Tvary {
     private int x;
     private int y;
-    private int radius;
-    private String tvar;
 }

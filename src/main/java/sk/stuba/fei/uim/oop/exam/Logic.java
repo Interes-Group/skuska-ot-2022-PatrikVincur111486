@@ -2,6 +2,9 @@ package sk.stuba.fei.uim.oop.exam;
 
 import lombok.Getter;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
 public class Logic extends Adapter {
@@ -21,20 +24,36 @@ public class Logic extends Adapter {
         this.spacing=5;
         this.counterOfPoints=0;
         this.tvar="kruh";
+        this.canvas.setTvar(this.tvar);
+        this.canvas.setRadius(this.radius);
     }
 
     private Tvary createTvar(MouseEvent e){
-        return new Tvary(e.getX(),e.getY(),this.radius,this.tvar);
+        return new Tvary(e.getX(),e.getY());
     }
 
     private void draw(MouseEvent e){
-        if(canvas.pointList.size()<length){
-            canvas.addPoint(e.getX(),e.getY());
-            canvas.repaint();
-        }else if(this.counterOfPoints%this.spacing==0){
-            this.canvas.getTvaryList().add(0,createTvar(e));
+        if(this.canvas.pointList.size()>=this.length){
+            this.canvas.getPointList().remove(0);
+            this.canvas.getTvaryList().remove(0);
+        }
+        this.canvas.addPoint(e.getX(),e.getY());
+        this.canvas.repaint();
+        if(this.counterOfPoints%this.spacing==0){
+            this.canvas.getTvaryList().add(createTvar(e));
             this.canvas.repaint();
         }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if(e.getSource() instanceof JSlider) {
+                this.radius=((JSlider) e.getSource()).getValue();
+                this.canvas.setRadius(this.radius);
+                this.length=((JSlider) e.getSource()).getValue();
+
+            }
+        this.canvas.repaint();
     }
 
     @Override
@@ -47,4 +66,12 @@ public class Logic extends Adapter {
         this.draw(e);
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof JComboBox) {
+            this.tvar = (String) ((JComboBox) e.getSource()).getSelectedItem();
+            this.canvas.setTvar(this.tvar);
+            this.canvas.repaint();
+        }
+    }
 }
